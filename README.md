@@ -4,3 +4,6 @@ Over the course of my internship I created the new dashboard based on the existi
 Most of the code won't make much sense in this context, but it's the most I could do.
 
 I assure you, this is not how I normally publish or manage my code bases, this is a weird situation in which I have to balance the company policies and the universities' needs.
+
+# About the code
+Most of it is not production worthy code, it's still very much a proof of concept. It is the result of new technologies, limited time and prioritizing getting something tangible (for the user) over something well written.
