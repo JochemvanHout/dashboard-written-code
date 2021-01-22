@@ -73,25 +73,6 @@ export default class InternAssignmentMixin extends Vue {
       return tempStore;
   }
 
-  // makeGetCallTasks(APICall: string): any{
-  //   const tempStore: ITaskEntry[] = [];
-  //   return Axios.get(APICall)
-  //     .then((response) => {
-  //       return response.data;
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     })
-  //     .then((data) => {
-  //       data.forEach((element: ITaskEntry) => {
-  //         element.priority = this.sanitizePriorityData(element.priority, element.inactive);
-  //         element.date = new Date(element.date);
-  //         tempStore.push(element);
-  //       });
-        
-  //     });  
-  // }
-
   makeGetCallShifts(APICall: string): any{
     const tempStore: IShift[] = [];
     Axios.get(APICall)

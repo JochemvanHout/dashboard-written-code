@@ -29,7 +29,7 @@ export default class DashboardShiftItem extends Mixins(InternAssignmentMixin) {
     height: 60px;
     &:hover{
       color: #004d9d;
-      // font-weight: bold;
+      background-color: #f5f5f5;
       cursor: pointer;
     }
   }

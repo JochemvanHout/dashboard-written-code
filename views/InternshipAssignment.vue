@@ -39,10 +39,14 @@ export default class InternshipAssignment extends Vue {
 
 <style lang="scss">
 
-th {
-  cursor: pointer;
-  border-bottom: 2px solid #004d9d;
-  min-width: 50px;
-}
+  th {
+    cursor: pointer;
+    border-bottom: 2px solid #004d9d;
+    min-width: 50px;
+  }
 
+  .column-active {
+    font-weight: 800;
+    color: #004d9d;
+  }
 </style>

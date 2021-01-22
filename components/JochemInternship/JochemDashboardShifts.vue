@@ -14,8 +14,8 @@
           <div class="filter-list">
             <h5>Locaties</h5>
             <form v-for="location in temporaryLocationArray" :key="location" @change="filterData(IncidentalFiltersLocation, IncidentalFiltersOrganisaton, IncidentalFiltersQualificaction)">
-              <input type="checkbox" v-model="IncidentalFiltersLocation" :value="location" />
-              <label> {{location}}</label>
+              <input type="checkbox" v-model="IncidentalFiltersLocation" :value="location" class="checkbox-input"/>
+              <label class="checkbox-label"> {{location}}</label>
             </form>
           </div>
 
@@ -53,6 +53,37 @@
       </p-tab>
 
       <p-tab :title="`Periodiek (${ShiftsPeriodic.length})`">
+
+      <div class="filter-wrapper">
+        <button class="filter-button" @click="showFilterMenu = !showFilterMenu">Filter</button>
+        <div class="filter-items" v-if="showFilterMenu">
+
+          <div class="filter-list">
+            <h5>Locaties</h5>
+            <form v-for="location in temporaryLocationArray" :key="location" @change="filterDataPeriodic(PeriodicFiltersLocation, PeriodicFiltersOrganisaton, PeriodicFiltersQualificaction)">
+              <input type="checkbox" v-model="PeriodicFiltersLocation" :value="location" />
+              <label> {{location}}</label>
+            </form>
+          </div>
+
+          <div class="filter-list">
+            <h5>Organisaties</h5>
+            <form v-for="organisation in temporaryOrganisationArray" :key="organisation" @change="filterDataPeriodic(PeriodicFiltersLocation, PeriodicFiltersOrganisaton, PeriodicFiltersQualificaction)">
+              <input type="checkbox" v-model="PeriodicFiltersOrganisaton" :value="organisation"/>
+              <label> {{organisation}}</label>
+            </form>
+          </div>
+
+          <div class="filter-list">
+            <h5>Kwalificatie</h5>
+            <form v-for="qualification in temporaryQualificationArray" :key="qualification" @change="filterDataPeriodic(PeriodicFiltersLocation, PeriodicFiltersOrganisaton, PeriodicFiltersQualificaction)">
+              <input type="checkbox" v-model="PeriodicFiltersQualificaction" :value="qualification"/>
+              <label> {{qualification}}</label>
+            </form>
+          </div>
+        </div>
+      </div>
+
         <table id="shift-table">
           <tr>
             <th v-for="header in tableFormatShifts" :key="header.id" :class="{'column-active': header.isActive}" @click="sortData(header.tableKey, ShiftsPeriodic, header);">
@@ -98,8 +129,8 @@ import InternAssignmentMixin from '@/mixins/InternAssignmentMixin';
 import PTabs from '@pidz/vue-components/tabs/PTabs.vue';
 import PTab from '@pidz/vue-components/tabs/PTab.vue';
 import PageContent from '@/components/Content/PageContent.vue';
-import ShiftItem from './DashboardShiftItem.vue';
-import HourItem from './DashboardHourItem.vue';
+import ShiftItem from './items/DashboardShiftItem.vue';
+import HourItem from './items/DashboardHourItem.vue';
 
   interface IShift {
     id: number,
@@ -142,9 +173,14 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
   lastSortName: string = '';
   ascOrDesc: number = -1;
   showFilterMenu: boolean = false;
+
   IncidentalFiltersLocation: string[] = [];
   IncidentalFiltersOrganisaton: string[] = [];
   IncidentalFiltersQualificaction: string[] = [];
+
+  PeriodicFiltersLocation: string[] = [];
+  PeriodicFiltersOrganisaton: string[] = [];
+  PeriodicFiltersQualificaction: string[] = [];
 
   created(): void {
 
@@ -165,21 +201,21 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
 
     // Set the correct header to active
     header.isActive = !header.isActive;
-    header.direction = '▼';
+    header.direction = ' ▼';
 
     let order = this.ascOrDesc;
 
     if(this.lastSortName === name) { // If the pressed header is the same one, flip it
       if(order === -1){
         order = 1; 
-        header.direction = '▲';
+        header.direction = ' ▲';
       } else {
         order = -1;
-        header.direction = '▼';
+        header.direction = ' ▼';
       }
     } else { // If it's a new column reset it
       order = -1;
-      header.direction = '▼';
+      header.direction = ' ▼';
     }
 
     this.ascOrDesc = order;
@@ -247,6 +283,49 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
   
   }
 
+
+    filterDataPeriodic(locations: string[], organisations: string[], qualifications: string[]): void{
+
+    let filteredShiftsList: any[] = [];
+    let tempValue: any[] = [];
+
+    if(locations.length > 0){
+      locations.forEach(location => {
+        filteredShiftsList.push.apply(filteredShiftsList, this.ShiftsPeriodicRawData.filter(shift => shift.location.includes(location)));
+      });
+    } else {
+      filteredShiftsList = this.ShiftsPeriodicRawData;
+    }
+
+    if(organisations.length > 0){
+      organisations.forEach(organisation => {
+        tempValue.push.apply(tempValue, filteredShiftsList.filter(shift => shift.organisation.includes(organisation)));
+      });
+      filteredShiftsList = tempValue;
+      tempValue = [];
+    }
+
+    if(qualifications.length > 0){
+      qualifications.forEach(qualification => {
+        tempValue.push.apply(tempValue, filteredShiftsList.filter(shift => shift.qualification.includes(qualification)));
+      });
+      filteredShiftsList = tempValue;
+    }
+
+    this.ShiftsPeriodic = filteredShiftsList;
+
+    // If nothing is found give a message
+    if(filteredShiftsList.length === 0){
+      this.ShiftsPeriodic = filteredShiftsList;
+    }
+
+    // If nothing is selected
+    if(locations.length === 0 && organisations.length === 0 && qualifications.length === 0){
+      this.ShiftsPeriodic = this.ShiftsPeriodicRawData;
+    }
+  
+  }
+
   tableFormatShifts = [
     {
       id: 0,
@@ -271,7 +350,7 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
     },
     {
       id: 3,
-      tableHeader: 'Zzpers',
+      tableHeader: 'Zzp\'ers',
       tableKey: 'freelancersCurrent',
       direction: '',
       isActive: false
@@ -281,7 +360,7 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
     tableFormatHours = [
     {
       id: 0,
-      tableHeader: 'Zzper',
+      tableHeader: 'Zzp\'er',
       tableKey: 'freelancer',
       direction: '',
       isActive: false
@@ -327,28 +406,31 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
       }
     }
   }
-  .column-active {
-    font-weight: 800;
-    color: #004d9d;
-  }
 
   .filter-wrapper{
-    margin:5px;
+    margin: 0 -30px 20px -30px;
   }
 
   .filter-button {
+    margin-left: 30px;
+    margin-bottom: 10px;
     background-color: #004d9d;
     display:inline-block;
     cursor:pointer;
     color:white;
     text-decoration:none;
     width:10%;
+      &:focus {
+        outline: none;
+      }
   }
 
   .filter-items {
     padding:10px;
     max-height: 30vh;
     background-color: #ecf8fd;
+    margin-top: 20px;
+    margin-bottom: 20px;
     overflow:auto;
     display: flex;
     justify-content: space-around;
@@ -357,6 +439,17 @@ export default class JochemDashboardShifts extends Mixins(InternAssignmentMixin)
   .filter-list {
     overflow: auto;
     padding: 10px;
+
+      input {
+        margin-right: 5px;
+        height:20px;
+        width: 20px;
+        background-color: #ecf8fd;
+      }
+
+      .checkbox-label {
+        font-size: 16px;
+      }
 
   }
 </style>

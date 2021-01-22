@@ -7,7 +7,7 @@
     </td>
 
     <td>{{task.freelancer || task.organisation}}</td>
-    <td class="task-text">{{task.task}}</td>
+    <td>{{task.task}}</td>
     <td>{{task.date | sanitizeDate}}</td>
   </tr>
 </template>
@@ -29,11 +29,13 @@ export default class DashboardTaskItem extends Mixins(InternAssignmentMixin) {
 </script>
 
 <style scoped lang="scss">
+
   .task-priority-indicator {
-    background-color: red;
+    background-color: black;
     border-radius: 50%;
     width: 10px;
     height: 10px;
+    // margin: auto;
   }
 
   .task-text {
@@ -45,8 +47,10 @@ export default class DashboardTaskItem extends Mixins(InternAssignmentMixin) {
     height: 60px;
     &:hover{
       color: #004d9d;
-      // font-weight: bold;
+      background-color: #f5f5f5;
       cursor: pointer;
     }
   }
+
+
 </style>
